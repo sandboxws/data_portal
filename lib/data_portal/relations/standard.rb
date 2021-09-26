@@ -1,14 +1,21 @@
-module DataPortal::Fields
+module DataPortal::Relations
   class Standard
-    attr_accessor :default_value, :name, :method_name, :options, :relation, :attributes
+    attr_accessor :default_value,
+                  :name,
+                  :method_name,
+                  :options,
+                  :attributes,
+                  :order,
+                  :count_attributes
 
     def initialize(name, options = {}, &block)
       @name = name
       @options = options
+      @attributes = {}
+      @count_attributes = {}
       @default_value = options[:default_value]
       @method_name = options[:method_name]
-      @relation = options[:relation]
-      @attributes = {}
+      @order = options[:order]
 
       process_block(&block) if block_given?
     end
@@ -21,7 +28,10 @@ module DataPortal::Fields
 
     def attribute(name, options = {}, &block)
       attributes[name] = DataPortal::Attributes::Standard.new(name, options, &block)
-      true
+    end
+
+    def count_attribute(name, _options = {})
+      count_attributes[name] = DataPortal::Attributes::Count.new(name)
     end
 
     # TODO: add recursive support
@@ -30,6 +40,7 @@ module DataPortal::Fields
       return unless value.present?
       return object_value(value) unless value.is_a?(ActiveRecord::Associations::CollectionProxy)
 
+      value = value.order(**order) if order.present?
       value.map do |obj|
         object_value obj
       end
@@ -42,6 +53,11 @@ module DataPortal::Fields
         output = {}
         attributes.each do |name, attr|
           output[name] = attr.value value
+        end
+
+        # TODO: Refactor to rendering utils
+        count_attributes.each do |name, attr|
+          output["#{name}_count"] = attr.value value
         end
 
         value = output

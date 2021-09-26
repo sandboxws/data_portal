@@ -1,6 +1,11 @@
 module DataPortal::Attributes
   class Standard
-    attr_accessor :default_value, :name, :method_name, :options, :given_block
+    attr_accessor :default_value,
+                  :name,
+                  :method_name,
+                  :options,
+                  :given_block,
+                  :type
 
     def initialize(name, options = {}, &block)
       @name = name
@@ -8,6 +13,7 @@ module DataPortal::Attributes
       @method_name = options[:method_name]
       @default_value = options[:default_value]
       @given_block = block
+      @type = self.class.name.demodulize.underscore.to_sym
     end
 
     def value(object)

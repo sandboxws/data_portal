@@ -4,24 +4,30 @@ module DataPortal
   module Provider
     extend ActiveSupport::Concern
     included do
-      attr_accessor :ids, :attributes, :fields, :model_class
+      attr_accessor :ids, :attributes, :relations, :model_class, :filters, :options
 
-      def initialize(ids:, attributes:, fields:, model_class:)
+      # TODO: Add validations
+      def initialize(ids:, attributes:, model_class:, relations: [], filters: {}, options: {})
         @ids = ids.is_a?(Array) ? ids : [ids]
         @attributes = attributes
-        @fields = fields
+        @filters = filters
         @model_class = model_class
+        @options = options
+        @relations = relations
       end
 
+      # TODO: allow executing using filters with no ids
       def execute
         relation = model_class.where("#{model_class.primary_key}": ids)
-        relation = relation.includes(relation_fields) if relation_fields.size.positive?
+        relation = relation.includes(relation_names) if relation_names.size.positive?
 
         ids.size == 1 ? relation.first : relation.to_a
       end
 
-      def relation_fields
-        fields.map { |_name, field| field.relation }.compact
+      def relation_names
+        # fields.map { |_name, field| field.relation }.compact
+        # TODO: handle "relation_name:"
+        relations.keys
       end
     end
 
@@ -32,13 +38,3 @@ module DataPortal
     end
   end
 end
-
-# # Usage
-# class PostProvider
-#   include DataPortal::Provider
-
-#   model_class Post
-# end
-
-# pp = PostProvider.build(id: id, attributes: attributes, fields: fields)
-# pv = PostView

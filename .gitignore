@@ -452,3 +452,5 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/ruby,rails,vim,rubymine,visualstudiocode,webstorm+all,emacs,macos,linux,windows
 
 .local-history
+spec/dummy/log
+spec/dummy/tmp

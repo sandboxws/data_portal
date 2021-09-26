@@ -9,19 +9,29 @@ module Views
     attribute :description
     attribute :release_year
 
-    count_field :categories
-    count_field :actors
+    count_attribute :categories
+    count_attribute :actors
+    # attribute :actors, type: :count
+    # attribute :actors, count: true
 
-    field :categories, relation: :categories do
+    relation :categories do
       attribute :id, method_name: :category_id
       attribute :name
+      count_attribute :films
     end
 
-    field :actors, relation: :actors do
+    relation :actors, order: { last_name: :asc } do
       attribute :id, method_name: :actor_id
       attribute :full_name do |obj|
         "#{obj.first_name} #{obj.last_name}"
       end
+    end
+
+    attribute :foobar, provider: Providers::FooProvider do
+      argument :start_date, value: Time.now
+      argument :film_id
+      attribute :foo
+      attribute :bar
     end
   end
 end
