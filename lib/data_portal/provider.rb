@@ -4,22 +4,24 @@ module DataPortal
   module Provider
     extend ActiveSupport::Concern
     included do
-      attr_accessor :ids, :attributes, :relations, :model_class, :filters, :options
+      attr_accessor :ids, :attributes, :relations, :model_class, :filters, :options, :includes
 
       # TODO: Add validations
-      def initialize(ids:, attributes:, model_class:, relations: [], filters: {}, options: {})
+      def initialize(ids:, attributes:, model_class:, relations: [], filters: {}, options: {}, includes: [])
         @ids = ids.is_a?(Array) ? ids : [ids]
         @attributes = attributes
         @filters = filters
         @model_class = model_class
         @options = options
         @relations = relations
+        @includes = includes
       end
 
       # TODO: allow executing using filters with no ids
       def execute
         relation = model_class.where("#{model_class.primary_key}": ids)
-        relation = relation.includes(relation_names) if relation_names.size.positive?
+        relation = relation.includes(includes) unless includes.size.zero?
+        # relation = relation.includes(relation_names) if relation_names.size.positive?
 
         ids.size == 1 ? relation.first : relation.to_a
       end

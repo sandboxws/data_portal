@@ -15,6 +15,9 @@ require 'data_portal/provider'
 # Views
 require 'data_portal/view'
 
+# Renderer
+require 'data_portal/view_renderer'
+
 module DataPortal
   # Your code goes here...
 end

@@ -1,10 +1,19 @@
 module DataPortal::Relations
   class Standard
+    TYPES = %i[has_one belongs_to has_many]
+    TYPES.each do |type|
+      define_method "#{type}?" do
+        self.type == type
+      end
+    end
+
     attr_accessor :default_value,
                   :name,
                   :method_name,
                   :options,
+                  :type,
                   :attributes,
+                  :relations,
                   :order,
                   :count_attributes
 
@@ -12,7 +21,9 @@ module DataPortal::Relations
       @name = name
       @options = options
       @attributes = {}
+      @relations = {}
       @count_attributes = {}
+      @type = options[:type] || :has_one
       @default_value = options[:default_value]
       @method_name = options[:method_name]
       @order = options[:order]
@@ -21,20 +32,27 @@ module DataPortal::Relations
     end
 
     def process_block(&block)
-      # Process attributes
-      # TODO: Add recursive support
       instance_eval(&block)
     end
 
     def attribute(name, options = {}, &block)
+      puts "Adding attribute(#{name}) for #{self.name}"
       attributes[name] = DataPortal::Attributes::Standard.new(name, options, &block)
+    end
+
+    def relation(name, options = {}, &block)
+      puts "Nested relation: #{name}"
+      relations[name] = DataPortal::Relations::Standard.new(name, options, &block)
+    end
+
+    def has_one(name, options = {}, &block)
+      relation(name, options, &block)
     end
 
     def count_attribute(name, _options = {})
       count_attributes[name] = DataPortal::Attributes::Count.new(name)
     end
 
-    # TODO: add recursive support
     def value(object)
       value = method_name.present? ? object.send(method_name) : object.send(name)
       return unless value.present?
@@ -48,23 +66,47 @@ module DataPortal::Relations
 
     private
 
+    # TODO: add recursive support
+    # TODO: Refactor to rendering utils
     def object_value(value)
-      if value.present? && attributes.size.positive?
+      if value.present?
         output = {}
-        attributes.each do |name, attr|
-          output[name] = attr.value value
+        # Render attributes
+        if attributes.size.positive?
+          render_attributes output, value, attributes
+
+          count_attributes.each do |name, attr|
+            output["#{name}_count"] = attr.value value
+          end
+
+          # value = output
         end
 
-        # TODO: Refactor to rendering utils
-        count_attributes.each do |name, attr|
-          output["#{name}_count"] = attr.value value
+        # Render nested relations
+        # N+1 - Should be fixed using either default providers or custom
+        # Warn if neither are available
+        relations.each do |name, relation|
+          # output[name] = relation.value value
+          output[name] = {}
+          relations_value(output[name], name, relation, value.send(name))
         end
-
-        value = output
       end
-      value = default_value if value.nil? && default_value.present?
 
-      value
+      output || default_value
+      #       value = default_value if value.nil? && default_value.present?
+
+      #       value
+    end
+
+    def relations_value(output, _name, root, value)
+      # render_attributes output, value, attributes if root.relations.size.zero?
+      render_attributes output, value, root.attributes if root.relations.size.zero?
+    end
+
+    def render_attributes(output, value, attributes)
+      attributes.each do |name, attr|
+        output[name] = attr.value value
+      end
     end
   end
 end
