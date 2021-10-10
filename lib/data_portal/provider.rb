@@ -21,18 +21,31 @@ module DataPortal
       def execute
         relation = model_class
         relation = model_class.where("#{model_class.primary_key}": ids) unless ids.nil? || ids.size == 0
-        relation = apply_filters relation
         relation = relation.includes(includes) unless includes.size.zero?
+        relation = apply_filters relation
         # relation = relation.includes(relation_names) if relation_names.size.positive?
 
         ids.present? && ids.size == 1 ? relation.first : relation.to_a
       end
 
+      # Apply filters, order, and limits
+      # TODO: rename function and add arguments support
       def apply_filters(relation)
         return relation unless filters[:main].present?
 
-        filters[:main].each do |filter|
-          relation = relation.where(filter)
+        # source_reflection_names = {}
+
+        filters.each do |name, filters|
+          # source_reflection_names[name] = name
+          relation = name == :main ? relation.where(filters) : relation.where("#{name}": filters)
+        end
+
+        # Only works when filters are applied
+        relations.each do |name, rel|
+          next unless rel.has_many? && rel.order.present?
+
+          name = filters[name].present? ? name : model_class.reflect_on_association(name).source_reflection_name
+          rel.order.each { |attr, direction| relation = relation.order("#{name}.#{attr} #{direction}") }
         end
 
         relation

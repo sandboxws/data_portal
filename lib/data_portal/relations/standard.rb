@@ -58,7 +58,6 @@ module DataPortal::Relations
       return unless value.present?
       return object_value(value) unless value.is_a?(ActiveRecord::Associations::CollectionProxy)
 
-      value = value.order(**order) if order.present?
       value.map do |obj|
         object_value obj
       end
