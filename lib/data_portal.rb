@@ -1,3 +1,6 @@
+require 'rails'
+require 'awesome_print'
+
 require 'data_portal/version'
 require 'data_portal/railtie'
 

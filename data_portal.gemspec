@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email       = ['328866+sandboxws@users.noreply.github.com']
   spec.homepage    = 'https://www.github.com/sandboxws/data_portal'
   spec.summary     = 'Clean separation between data access, domain logic, and the presentation layer'
-  spec.description = 'Clean separation between data access, domain logic, and the presentation layer'
+  spec.description = 'Clean separation between data access, domain logic, and the presentation layer inside of your Rails applicaiton'
   spec.license     = 'MIT'
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -20,10 +20,13 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  spec.add_dependency 'awesome_print', '~> 1.9'
-  spec.add_dependency 'rails', '~> 6.1.4', '>= 6.1.4.1'
+  spec.add_dependency 'awesome_print'
+  spec.add_dependency 'rails', '>= 4.2'
+
+  spec.add_development_dependency 'appraisal'
+  spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'binding_of_caller'
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'pry-rails'
-  spec.add_development_dependency 'rspec', '>= 3.10'
+  spec.add_development_dependency 'rspec'
 end

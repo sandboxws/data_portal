@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     data_portal (0.1.0)
-      awesome_print (~> 1.9)
-      rails (~> 6.1.4, >= 6.1.4.1)
+      awesome_print
+      rails (>= 4.2)
 
 GEM
   remote: https://rubygems.org/
@@ -67,6 +67,10 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    appraisal (2.4.0)
+      bundler
+      rake
+      thor (>= 0.14.0)
     awesome_print (1.9.2)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
@@ -166,12 +170,14 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
+  appraisal
+  awesome_print
   binding_of_caller
   data_portal!
   pg
   pry-byebug
   pry-rails
-  rspec (>= 3.10)
+  rspec
 
 BUNDLED WITH
    2.2.23

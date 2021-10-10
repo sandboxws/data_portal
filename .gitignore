@@ -454,3 +454,4 @@ $RECYCLE.BIN/
 .local-history
 spec/dummy/log
 spec/dummy/tmp
+/.rspec_status

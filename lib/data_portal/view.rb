@@ -3,7 +3,7 @@ module DataPortal
     extend ActiveSupport::Concern
 
     included do
-      attr_accessor :ids, :filters, :options, :source, :output, :includes
+      attr_accessor :ids, :filters, :options, :source, :output, :includes, :selection
 
       class_attribute :attributes
       # class_attribute :count_attributes
@@ -16,22 +16,36 @@ module DataPortal
       self.relations = {}
       self.has_many_relations = {}
       self.has_one_relations = {}
-      # self.count_attributes = {}
 
       def initialize(ids:, filters: {}, options: {})
         @ids = ids.is_a?(Array) ? ids : [ids]
         @filters = filters
         @options = options
+        @selection = options[:selection]
         @includes = {}
 
         # initialize AR includes
-        relations.each do |_name, relation|
+        selected_relations.each do |_name, relation|
           prepare_includes(@includes, relation)
         end
       end
 
       def render
         ::DataPortal::ViewRenderer.render self, source
+      end
+
+      def selected_relations
+        return relations unless selection.present?
+
+        @selected_relations ||= relations.select { |name, _rel| selection.include?(name) }
+        @selected_relations
+      end
+
+      def selected_attributes
+        return attributes unless selection.present?
+
+        @selected_attributes ||= attributes.select { |name, _attr| selection.include?(name) }
+        @selected_attributes
       end
 
       def count_attributes
@@ -72,17 +86,14 @@ module DataPortal
         name = relation.first
         relation = relation.last
         if relation.relations.size.zero?
-          puts "Render relations: #{name} #{source.class.name}:#{source.id}"
+          # puts "Render relations: #{name} #{source.class.name}:#{source.id}"
           output[name] = relation.value source
         else
-          # output[root_name][name] = {}
-          # output = output[name]
           source = source.send name
           output[name] = source.is_a?(ActiveRecord::Associations::CollectionProxy) ? [] : {}
           source = source.is_a?(ActiveRecord::Associations::CollectionProxy) ? source : [source]
           source.each_with_index do |source, _idx|
             relation.relations.each do |relation|
-              # output[name] = relation.value source
               render_relations output, relation, source
             end
           end
@@ -98,11 +109,6 @@ module DataPortal
                              DataPortal::Attributes::Standard.new(name, options, &block)
                            end
       end
-
-      # def count_attribute(name, _options = {})
-      #   # TODO: Add "as: " to options
-      #   count_attributes[name] = DataPortal::Attributes::Count.new(name)
-      # end
 
       def relation(name, options = {}, &block)
         relations[name] = DataPortal::Relations::Standard.new(name, options, &block)

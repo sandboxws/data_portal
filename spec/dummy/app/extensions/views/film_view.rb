@@ -35,12 +35,5 @@ module Views
         attribute :address_id
       end
     end
-
-    # attribute :foobar, provider: Providers::FooProvider do
-    #   argument :start_date, value: Time.now
-    #   argument :film_id
-    #   attribute :foo
-    #   attribute :bar
-    # end
   end
 end
