@@ -17,8 +17,8 @@ module DataPortal
       self.has_many_relations = {}
       self.has_one_relations = {}
 
-      def initialize(ids:, filters: {}, options: {})
-        @ids = ids.is_a?(Array) ? ids : [ids]
+      def initialize(ids: nil, filters: {}, options: {})
+        @ids = ids.is_a?(Array) ? ids : [ids] unless ids.nil?
         @filters = filters
         @options = options
         @selection = options[:selection]
@@ -71,7 +71,8 @@ module DataPortal
           attributes: attributes,
           relations: relations,
           model_class: model,
-          includes: includes
+          includes: includes,
+          filters: filters
         ).execute
 
         # Handle standalone attributes

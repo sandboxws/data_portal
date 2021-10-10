@@ -8,7 +8,7 @@ module DataPortal
 
       # TODO: Add validations
       def initialize(ids:, attributes:, model_class:, relations: [], filters: {}, options: {}, includes: [])
-        @ids = ids.is_a?(Array) ? ids : [ids]
+        @ids = ids.is_a?(Array) ? ids : [ids] unless ids.nil?
         @attributes = attributes
         @filters = filters
         @model_class = model_class
@@ -19,11 +19,23 @@ module DataPortal
 
       # TODO: allow executing using filters with no ids
       def execute
-        relation = model_class.where("#{model_class.primary_key}": ids)
+        relation = model_class
+        relation = model_class.where("#{model_class.primary_key}": ids) unless ids.nil? || ids.size == 0
+        relation = apply_filters relation
         relation = relation.includes(includes) unless includes.size.zero?
         # relation = relation.includes(relation_names) if relation_names.size.positive?
 
-        ids.size == 1 ? relation.first : relation.to_a
+        ids.present? && ids.size == 1 ? relation.first : relation.to_a
+      end
+
+      def apply_filters(relation)
+        return relation unless filters[:main].present?
+
+        filters[:main].each do |filter|
+          relation = relation.where(filter)
+        end
+
+        relation
       end
 
       def relation_names
