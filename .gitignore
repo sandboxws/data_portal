@@ -455,3 +455,4 @@ $RECYCLE.BIN/
 spec/dummy/log
 spec/dummy/tmp
 /.rspec_status
+Gemfile.lock
