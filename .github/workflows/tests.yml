@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: [2.6]
+        ruby-version: [2.5, 2.6]
         gemfile: [ rails_5, rails_6 ]
     runs-on: ubuntu-latest
     env:

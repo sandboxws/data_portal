@@ -20,12 +20,12 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  #   spec.add_dependency 'awesome_print'
-  #   spec.add_dependency 'rails', '>= 4.2'
+  spec.add_dependency 'awesome_print'
+  spec.add_dependency 'rails', '>= 5.1'
 
   spec.add_development_dependency 'appraisal'
-  #   spec.add_development_dependency 'binding_of_caller'
-  #   spec.add_development_dependency 'pry-byebug'
-  #   spec.add_development_dependency 'pry-rails'
-  #   spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'binding_of_caller'
+  spec.add_development_dependency 'pry-byebug'
+  spec.add_development_dependency 'pry-rails'
+  spec.add_development_dependency 'rspec'
 end
