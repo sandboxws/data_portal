@@ -65,8 +65,7 @@ module DataPortal
 
       def source
         # convention over configuration
-        # provider_class = "Providers::#{model.name}Provider".constantize
-        provider_class = self.class.name.gsub(/View/, 'Provider')
+        provider_class = self.class.name.gsub(/View/, 'Provider').constantize
         @source ||= provider_class.new(
           ids: ids,
           attributes: attributes,
