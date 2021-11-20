@@ -31,6 +31,10 @@ module DataPortal::Relations
       process_block(&block) if block_given?
     end
 
+    def canonical_name
+      method_name || name
+    end
+
     def process_block(&block)
       instance_eval(&block)
     end

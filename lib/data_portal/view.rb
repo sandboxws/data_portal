@@ -54,11 +54,11 @@ module DataPortal
 
       def prepare_includes(includes, relation)
         if relation.relations.size.zero?
-          includes[relation.name] = {}
+          includes[relation.canonical_name] = {}
         else
           relation.relations.each do |_a_name, a_relation|
-            includes[relation.name] = {}
-            prepare_includes(includes[relation.name], a_relation)
+            includes[relation.canonical_name] = {}
+            prepare_includes(includes[relation.canonical_name], a_relation)
           end
         end
       end

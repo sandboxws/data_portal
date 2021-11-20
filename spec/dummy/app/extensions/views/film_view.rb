@@ -12,7 +12,7 @@ module Views
     attribute :actors, type: :count
     attribute :categories, type: :count
 
-    has_one :language do
+    has_one :lang, method_name: :language do
       attribute :name
     end
 
