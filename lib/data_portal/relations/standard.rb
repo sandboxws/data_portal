@@ -68,11 +68,11 @@ module DataPortal::Relations
     # TODO: add recursive support
     # TODO: Refactor to rendering utils
     def object_value(value)
+      output = {}
       if value.present?
-        output = {}
         # Render attributes
         if attributes.size.positive?
-          render_attributes output, value, attributes
+          output = render_attributes output, value, attributes
 
           count_attributes.each do |name, attr|
             Concurrent::Future.execute do
@@ -107,6 +107,8 @@ module DataPortal::Relations
           output[name] = attr.value value
         end
       end
+
+      output
     end
   end
 end

@@ -12,6 +12,10 @@ module Views
     attribute :actors, type: :count
     attribute :categories, type: :count
 
+    has_one :language do
+      attribute :name
+    end
+
     has_many :categories do
       attribute :id, method_name: :category_id
       attribute :name
@@ -35,5 +39,12 @@ module Views
         attribute :address_id
       end
     end
+
+    # attribute :foobar, provider: Providers::FooProvider do
+    #   argument :start_date, value: Time.now
+    #   argument :film_id
+    #   attribute :foo
+    #   attribute :bar
+    # end
   end
 end

@@ -46,6 +46,8 @@ module DataPortal
       # if relation.relations.size.zero?
       if relation.has_many?
         output << relation.value(object)
+      elsif relation.has_one?
+        output[name] = relation.value(object)
       else
         object = object.send name
         if !object.is_a?(ActiveRecord::Associations::CollectionProxy)

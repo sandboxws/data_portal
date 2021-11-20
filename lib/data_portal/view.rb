@@ -120,6 +120,11 @@ module DataPortal
         relations[name] = DataPortal::Relations::Standard.new(name, options, &block)
       end
 
+      def has_one(name, options = {}, &block)
+        options[:type] = :has_one
+        relations[name] = DataPortal::Relations::Standard.new(name, options, &block)
+      end
+
       def model_class(klass)
         self.model = klass
       end
