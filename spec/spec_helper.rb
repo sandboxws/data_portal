@@ -1,5 +1,7 @@
 require 'bundler/setup'
-# require 'mongoid'
+require 'awesome_print'
+require 'binding_of_caller'
+require 'pry-rails'
 # require 'simplecov'
 # require 'simplecov-console'
 
@@ -15,15 +17,9 @@ require 'data_portal'
 #   class Application
 #   end
 # end
-#
+
 # module MyApp
 #   class Application < Rails::Application
-#   end
-# end
-#
-# module Mongoid
-#   class Query
-#     include Mongoid::Criteria::Queryable
 #   end
 # end
 

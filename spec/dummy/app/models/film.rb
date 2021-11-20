@@ -7,4 +7,7 @@ class Film < ApplicationRecord
 
   has_many :film_categories
   has_many :categories, through: :film_categories
+
+  has_many :inventories
+  belongs_to :language
 end
