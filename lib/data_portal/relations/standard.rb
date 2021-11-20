@@ -75,10 +75,10 @@ module DataPortal::Relations
           render_attributes output, value, attributes
 
           count_attributes.each do |name, attr|
-            output["#{name}_count"] = attr.value value
+            Concurrent::Future.execute do
+              output["#{name}_count"] = attr.value value
+            end
           end
-
-          # value = output
         end
 
         # Render nested relations
@@ -87,14 +87,13 @@ module DataPortal::Relations
         relations.each do |name, relation|
           # output[name] = relation.value value
           output[name] = {}
-          relations_value(output[name], name, relation, value.send(name))
+          Concurrent::Future.execute do
+            relations_value(output[name], name, relation, value.send(name))
+          end
         end
       end
 
       output || default_value
-      #       value = default_value if value.nil? && default_value.present?
-
-      #       value
     end
 
     def relations_value(output, _name, root, value)
@@ -104,7 +103,9 @@ module DataPortal::Relations
 
     def render_attributes(output, value, attributes)
       attributes.each do |name, attr|
-        output[name] = attr.value value
+        Concurrent::Future.execute do
+          output[name] = attr.value value
+        end
       end
     end
   end
