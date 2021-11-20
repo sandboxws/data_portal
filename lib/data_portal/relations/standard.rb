@@ -75,9 +75,7 @@ module DataPortal::Relations
           output = render_attributes output, value, attributes
 
           count_attributes.each do |name, attr|
-            Concurrent::Future.execute do
-              output["#{name}_count"] = attr.value value
-            end
+            output["#{name}_count"] = attr.value value
           end
         end
 
@@ -87,9 +85,7 @@ module DataPortal::Relations
         relations.each do |name, relation|
           # output[name] = relation.value value
           output[name] = {}
-          Concurrent::Future.execute do
-            relations_value(output[name], name, relation, value.send(name))
-          end
+          relations_value(output[name], name, relation, value.send(name))
         end
       end
 
@@ -103,9 +99,7 @@ module DataPortal::Relations
 
     def render_attributes(output, value, attributes)
       attributes.each do |name, attr|
-        Concurrent::Future.execute do
-          output[name] = attr.value value
-        end
+        output[name] = attr.value value
       end
 
       output
